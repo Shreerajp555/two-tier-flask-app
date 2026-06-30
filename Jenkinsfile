@@ -30,6 +30,7 @@ pipeline{
             steps{
                 script{
                     docker_push("dockerHubCreds","two-tier-flask-app")
+                }
             }
         }
         stage("deploy"){
