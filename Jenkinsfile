@@ -9,6 +9,8 @@ pipeline{
         stage("Trivy File sys Scan"){
             steps{
                 sh "trivy fs . -o resutls.json"
+            }
+        }
         stage("build"){
             steps{
                 sh "docker build -t two-tier-flask-app ."
