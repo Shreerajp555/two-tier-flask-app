@@ -1,56 +1,61 @@
 @Library("shared") _
-pipeline{
-    agent {label "dev"}
-    stages{
-        stage("code clone"){
-            steps{
-                script{
-                    clone("https://github.com/Shreerajp555/two-tier-flask-app.git", branch: "main")
-                }
+pipeline {
+    agent { label "dev" }
+
+    stages {
+
+        stage("Code Clone") {
+            steps {
+                gitClone("https://github.com/Shreerajp555/two-tier-flask-app.git", "main")
             }
         }
-        stage("Trivy File sys Scan"){
-            steps{
+
+        stage("Trivy File System Scan") {
+            steps {
                 trivy_fs()
             }
         }
-        stage("build"){
-            steps{
-                sh "docker build -t two-tier-flask-app ."
+
+        stage("Build") {
+            steps {
+                sh "docker build -t two-tier-flask-app:latest ."
             }
         }
-        stage("test"){
-            steps{
-                echo "testing will doen by test team"
+
+        stage("Test") {
+            steps {
+                echo "Testing will be done by test team"
             }
         }
-        stage("Push to DockerHub"){
-            steps{
-                script{
-                    docker_push("dockerHubCreds","two-tier-flask-app")
-                }
+
+        stage("Push to DockerHub") {
+            steps {
+                docker_push("dockerHubCreds", "two-tier-flask-app")
             }
         }
-        stage("deploy"){
-            steps{
+
+        stage("Deploy") {
+            steps {
                 sh "docker compose up -d --build flaskapp"
             }
         }
     }
-    post{
-        success{
+
+    post {
+        success {
             emailext(
-                subject: "build successful",
-                body: "good news  your build was successful",
+                subject: "Build Successful",
+                body: "Good news! Your build was successful.",
                 to: 'shreerajpatil29@gmail.com'
-                )
+            )
         }
-        failure{
+
+        failure {
             emailext(
-                subject: "build failed",
-                body: "Bad news your build was failed",
+                subject: "Build Failed",
+                body: "Bad news! Your build failed.",
                 to: 'shreerajpatil29@gmail.com'
-                )
+            )
         }
     }
 }
