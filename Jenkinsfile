@@ -11,9 +11,7 @@ pipeline{
         }
         stage("Trivy File sys Scan"){
             steps{
-                script{
-                    trivy_fs()
-                }
+                trivy_fs()
             }
         }
         stage("build"){
