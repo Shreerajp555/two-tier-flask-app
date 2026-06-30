@@ -35,4 +35,20 @@ pipeline{
             }
         }
     }
+    post{
+        success{
+            emailext(
+                subject: "build successful",
+                body: "good news  your build was successful",
+                to: 'shreerajpatil29@gmail.com'
+                )
+        }
+        failure{
+            emailext(
+                subject: "build failed",
+                body: "Bad news your build was failed",
+                to: 'shreerajpatil29@gmail.com'
+                )
+        }
+    }
 }
