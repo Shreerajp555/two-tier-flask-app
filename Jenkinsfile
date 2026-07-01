@@ -6,6 +6,11 @@ pipeline{
                 git url: "https://github.com/Shreerajp555/two-tier-flask-app.git", branch: "main"
             }
         }
+        stage("filesystem scan"){
+            steps{
+                sh "trivy fs . -o results.json"
+            }
+        }
         stage("build"){
             steps{
                 sh "docker build -t two-tier-flask-app ."
