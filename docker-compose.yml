@@ -21,8 +21,7 @@ services:
       timeout: 5s
 
   flaskapp:
-    build:
-      context: .
+    image: shreerajp555/two-tier-flask-app:latest
     container_name: flaskapp
     environment:
       MYSQL_HOST: mysql
