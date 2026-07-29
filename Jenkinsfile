@@ -1,37 +1,31 @@
 pipeline{
-    agent {label "dev"}
+    agent any
     stages{
         stage("Code Clone"){
             steps{
                 git url: "https://github.com/Shreerajp555/two-tier-flask-app.git", branch: "main"
             }
         }
-        stage("filesystem scan"){
+        stage("Build Stage"){
             steps{
-                sh "trivy fs . -o results.json"
+                sh "docker build -t two-tier-flask-app:latest ."
             }
         }
-        stage("build"){
+        stage("TEST"){
             steps{
-                sh "docker build -t two-tier-flask-app ."
+                echo "Testing team will do test"
             }
         }
-        stage("Test"){
+        stage("Push to DockerHub"){
             steps{
-                echo "Tester will test the code"
-            }
-        }
-        stage("Push to Docker Hub"){
-            steps{
-                withCredentials([usernamePassword(
-                    credentialsId: "dockerHubCreds",
-                    passwordVariable: "dockerHubPass",
-                    usernameVariable: "dockerHubUser")
-                    ]){
-                        sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPass}"
-                        sh "docker image tag two-tier-flask-app ${env.dockerHubUser}/two-tier-flask-app:latest"
-                        sh "docker push ${env.dockerHubUser}/two-tier-flask-app:latest"
-                    }
+                withCredentials([usernamePassword(credentialsId:"dockerHubCreds",
+                passwordVariable: "dockerHubPass",
+                usernameVariable: "dockerHubUser"
+                )]){
+                sh "docker login -u ${env.dockerHubUser} -p ${dockerHubPass}"
+                sh "docker image tag two-tier-flask-app:latest ${dockerHubUser}/two-tier-flask-app:latest"
+                sh "docker push ${env.dockerHubUser}/two-tier-flask-app:latest"
+                }
             }
         }
         stage("Deploy"){
