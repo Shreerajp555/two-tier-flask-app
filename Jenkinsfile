@@ -8,7 +8,7 @@ pipeline{
         }
         stage('Image Scan') {
             steps {
-                sh 'trivy fs . -o results.json'
+                sh 'sudo trivy fs . -o results.json'
             }
         }
         stage("Build Stage"){
