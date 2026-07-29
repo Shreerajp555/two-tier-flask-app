@@ -34,4 +34,23 @@ pipeline{
             }
         }
     }
+    post {
+        always {
+            // Sends an email on every build outcome
+            emailext (
+                subject: "Build ${currentBuild.currentResult}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+                body: """Check console output at ${env.BUILD_URL} to view the logs.
+                         Status: ${currentBuild.currentResult}""",
+                to: 'shreerajpatil29@gmail.com'
+            )
+        }
+        failure {
+            // Triggers only if the build fails
+            mail (
+                to: 'shreerajpatil29@gmail.com',
+                subject: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+                body: "The build failed. Please investigate immediately: ${env.BUILD_URL}"
+            )
+        }
+    }
 }
